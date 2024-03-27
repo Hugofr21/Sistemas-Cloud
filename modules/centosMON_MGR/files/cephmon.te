@@ -1,0 +1,25 @@
+module cephmon 1.0;
+
+require {
+        type ceph_t;
+        type ptmx_t;
+        type initrc_var_run_t;
+        type sudo_exec_t;
+        type chkpwd_exec_t;
+        type shadow_t;
+        class file { execute execute_no_trans lock getattr map open read };
+        class capability { audit_write sys_resource };
+        class process setrlimit;
+        class netlink_audit_socket { create nlmsg_relay };
+        class chr_file getattr;
+}
+
+#============= ceph_t ==============
+allow ceph_t initrc_var_run_t:file { lock open read };
+allow ceph_t self:capability { audit_write sys_resource };
+allow ceph_t self:netlink_audit_socket { create nlmsg_relay };
+allow ceph_t self:process setrlimit;
+allow ceph_t sudo_exec_t:file { execute execute_no_trans open read map };
+allow ceph_t ptmx_t:chr_file getattr;
+allow ceph_t chkpwd_exec_t:file { execute execute_no_trans open read map };
+allow ceph_t shadow_t:file { getattr open read };
