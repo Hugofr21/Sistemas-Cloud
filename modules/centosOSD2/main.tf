@@ -1,4 +1,4 @@
-resource "google_compute_instance" "node04" {
+resource "google_compute_instance" "node03" {
   name         = local.host_name
   machine_type = "e2-custom-2-4096"
   zone         = var.google_cloud_zone
@@ -70,6 +70,6 @@ resource "google_compute_disk" "adicional_disk_osd_2" {
 # connect compute & disk
 resource "google_compute_attached_disk" "adicional_disk_osd_2" {
   disk     = google_compute_disk.adicional_disk_osd_2.id
-  instance = google_compute_instance.node04.id
-  depends_on = [ google_compute_instance.node04]
+  instance = google_compute_instance.node03.id
+  depends_on = [ google_compute_instance.node03]
 }
