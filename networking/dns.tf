@@ -1,6 +1,6 @@
 resource "google_dns_managed_zone" "dns_zone" {
   name        = "videos-api-zone"
-  dns_name    = "videos-api.cloud.com"
+  dns_name    = "videos-api.example.com."
   description = "DNS zone for the videos API"
   dnssec_config {
     state = "off"

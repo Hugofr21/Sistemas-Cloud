@@ -31,13 +31,6 @@ service sshd restart
 postgresql-setup --initdb
 systemctl enable --now postgresql
 
- sudo iptables -A INPUT -p tcp --dport 6700:6900 -s 10.0.0.2,10.0.0.3,10.0.0.4,10.0.0.5,10.0.0.6 -j ACCEPT
- sudo iptables -A OUTPUT -p tcp --sport 6700:6900 -d 10.0.0.2,10.0.0.3,10.0.0.4,10.0.0.5,10.0.0.6 -j ACCEPT
- sudo iptables -A INPUT -p tcp --dport 5432 -s 192.168.1.71 -j ACCEPT
- sudo iptables -A OUTPUT -p tcp --sport 5432 -d 192.168.1.71 -j ACCEPT
- sudo iptables -A INPUT -i eth0 -m multiport -p tcp -s 10.0.0.0/27 --dports 6800:7300 -j ACCEPT
- iptables-save > /etc/sysconfig/iptables
-
  firewall-cmd --add-service=ceph --permanent
  firewall-cmd --add-service=postgresql --permanent
  firewall-cmd --add-service=rsyncd --permanent
