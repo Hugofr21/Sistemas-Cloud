@@ -1,7 +1,7 @@
-resource "google_compute_instance" "client" {
+resource "google_compute_instance" "node04client" {
   name         = local.host_name
   machine_type = "e2-medium"
-  zone         = var.google_cloud_zone
+  zone         = "europe-west1-d"
 
   can_ip_forward      = true
   deletion_protection = false
@@ -59,14 +59,16 @@ resource "google_compute_instance" "client" {
 }
 
 # disk
-resource "google_compute_disk" "adicional_disk_rbd" {
-  name = "diskrbd"
-  size = 5
+resource "google_compute_disk" "adicional_disk_client" {
+  name = "diskclient"
+  size = 10
+  type = "pd-ssd"
+  zone = "europe-west1-d"
 }
 
 # connect compute & disk
 resource "google_compute_attached_disk" "adicional_disk_rbd" {
-  disk       = google_compute_disk.adicional_disk_rbd.id
-  instance   = google_compute_instance.client.id
-  depends_on = [google_compute_instance.client]
+  disk       = google_compute_disk.adicional_disk_client.id
+  instance   = google_compute_instance.node04client.id
+  depends_on = [google_compute_instance.node04client]
 }

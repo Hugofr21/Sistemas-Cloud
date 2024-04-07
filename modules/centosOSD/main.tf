@@ -65,7 +65,7 @@ resource "google_compute_instance" "node02" {
 # disk
 resource "google_compute_disk" "adicional_disk_osd" {
   name = "diskosd"
-  size = 5
+  size = 10
   type = "pd-ssd"
 }
 

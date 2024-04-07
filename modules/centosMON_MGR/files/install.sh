@@ -20,14 +20,16 @@ base64 -d <<< "${ssh_private_key}" > /root/.ssh/id_rsa
 base64 -d <<< "${ssh_public_key}" > /root/.ssh/id_rsa.pub
 base64 -d <<< "${ssh_public_key}" > /root/.ssh/authorized_keys
 base64 -d <<< "${ssh_config}" > /root/.ssh/config
-chmod 400 ~/.ssh/id_rsa
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_rsa
 chmod 600 ~/.ssh/config
 chmod 600 ~/.ssh/id_rsa.pub
 chmod 600 ~/.ssh/authorized_keys
 sed -i 's/PermitRootLogin no/PermitRootLogin yes/g' /etc/ssh/sshd_config
 ssh-keyscan -H node01 >> ~/.ssh/known_hosts
 service sshd restart
-
+firewall-cmd --add-service=ssh
+firewall-cmd --runtime-to-permanent
 base64 -d <<< "${ceph_conf}" > /etc/ceph/ceph.conf
 
 # generate secret key for Cluster monitoring
@@ -95,47 +97,51 @@ firewall-cmd --runtime-to-permanent
 ##ceph auth get-or-create osd.node03 mon 'allow rwx' osd 'allow *' -o /var/lib/ceph/osd/ceph-node01/keyring/osd.node02.keyring
 ##ceph auth get-or-create osd.node04 mon 'allow rwx' osd 'allow *' -o /var/lib/ceph/osd/ceph-node01/keyring/osd.node01.keyring
 
+ssh-copy-id node02
+ssh-copy-id node03
+ssh-copy-id node04client
 
 # Configure the firewall settings for the current machine
-for NODE in node01 node02 node03 client
+for NODE in node01 node02 node03 node04client
 do
     ssh $NODE "firewall-cmd --add-service=ceph; firewall-cmd --runtime-to-permanent" -q
 done
 
-
-# VMs OSD configuration
-CEPH_CONF="/etc/ceph/ceph.conf"
-ADMIN_KEYRING="/etc/ceph/ceph.client.admin.keyring"
-OSD_KEYRING="/var/lib/ceph/bootstrap-osd/ceph.keyring"
-
-
-# OSD MON CREATE PARTED DISK
+##created OSD node01 
 chown ceph:ceph /etc/ceph/ceph.* /var/lib/ceph/bootstrap-osd/*
 parted --script /dev/sdb 'mklabel gpt'
 parted --script /dev/sdb 'mkpart primary 0% 100%'
 ceph-volume lvm create --data /dev/sdb1
 
-for NODE in node01 node02 node03
+# VMs node02 node03 OSD configuration
+CEPH_CONF="/etc/ceph/ceph.conf"
+ADMIN_KEYRING="/etc/ceph/ceph.client.admin.keyring"
+OSD_KEYRING="/var/lib/ceph/bootstrap-osd/ceph.keyring"
+chmod +r $OSD_KEYRING
+chmod +r $ADMIN_KEYRING
+chmod +r $OSD_KEYRING
+chmod +r /etc/ceph/ceph.mgr.admin.keyring
+chmod +r /etc/ceph/ceph.mon.keyring
+
+if [ -z "$CEPH_CONF" ] || [ -z "$ADMIN_KEYRING" ] || [ -z "$OSD_KEYRING" ]; then
+    echo "Error: One or more required variables are not defined."
+    exit 1
+fi
+
+for NODE in node02 node03
 do
-    if [ ! ${NODE} = "node01" ]
-    then
-        scp -o StrictHostKeyChecking=no $CEPH_CONF ${NODE}:$CEPH_CONF
-        scp -o StrictHostKeyChecking=no $ADMIN_KEYRING ${NODE}:/etc/ceph
-        scp -o StrictHostKeyChecking=no $OSD_KEYRING ${NODE}:/var/lib/ceph/bootstrap-osd
-    fi
-    ssh $NODE \
-    "chown ceph:ceph /etc/ceph/ceph.* /var/lib/ceph/bootstrap-osd/*; \
-    parted --script /dev/sdb 'mklabel gpt'; \
-    parted --script /dev/sdb "mkpart primary 0% 100%"; \
-    ceph-volume lvm create --data /dev/sdb1"
-done 
 
-
-
-CLIENT_KEYRING="/etc/ceph/ceph.client.admin.keyring"
-scp -o StrictHostKeyChecking=no $CLIENT_KEYRING $NODENAME_NODE02:/etc/ceph/
-MGR_KEYRING="/etc/ceph/ceph.mgr.admin.keyring"
-scp -o StrictHostKeyChecking=no $MGR_KEYRING $NODENAME_NODE02:/etc/ceph/
+      scp -o StrictHostKeyChecking=no "$CEPH_CONF" "$NODE:$CEPH_CONF"
+      scp -o StrictHostKeyChecking=no "$ADMIN_KEYRING" "$NODE:/etc/ceph"
+      scp -o StrictHostKeyChecking=no "$OSD_KEYRING" "$NODE:/var/lib/ceph/bootstrap-osd"
+      ssh -o StrictHostKeyChecking=no $NODE " \
+        "chown ceph:ceph /etc/ceph/ceph.* /var/lib/ceph/bootstrap-osd/*; \
+        parted --script /dev/sdb 'mklabel gpt'; \
+        parted --script /dev/sdb 'mkpart primary 0% 100%'; \
+        ceph-volume lvm create --data /dev/sdb1"
+    "
+done
+   
 
 
 # crete dashboard ceph

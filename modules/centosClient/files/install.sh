@@ -19,6 +19,7 @@ mkdir -p /root/.ssh
 echo "${SSH_PUBLIC_KEY_CLIENT}" | base64 -d > /root/.ssh/id_rsa.pub
 echo "${SSH_PUBLIC_KEY_CLIENT}" | base64 -d > /root/.ssh/authorized_keys
 
+chmod 700 ~/.ssh
 chmod 400 ~/.ssh/id_rsa
 chmod 600 ~/.ssh/config
 chmod 600 ~/.ssh/id_rsa.pub
@@ -41,18 +42,18 @@ systemctl enable --now postgresql
 mkdir -p /var/lib/ceph/mds/ceph-client/
 
 ##------------ ssl certicate --------------------
-sudo dnf --enablerepo=epel -y install snapd
-sudo ln -s /var/lib/snapd/snap /snap
-sud0 echo 'export PATH=$PATH:/var/lib/snapd/snap/bin' > /etc/profile.d/snap.sh
-sudo systemctl enable --now snapd.service snapd.socket
-sudo snap install -- cerbot --classic
-sudo ln -s /snap/bin/certboot /usr/bin/certboot
-sudo certbot certonly --agree-tos --webroot -w /var/www/html -d videos-api.cloud
+# sudo dnf --enablerepo=epel -y install snapd
+# sudo ln -s /var/lib/snapd/snap /snap
+# snap list
+# snap find kubernetes
+# snap install certbot --classic
+# sudo certbot --nginx -d video-cloud
+
 
 ##------------ Memcached  --------------------
 #vi /etc/sysconfig/memcached
 sed -i -e 's/^PORT=.*/PORT="2000/"' /etc/sysconfig/memcached
-sed -i -e 's/^CACHESIZE=.*/CACHESIZE="1024/' /etc/sysconfig/memcached
+sed -i -e 's/^CACHESIZE=.*/CACHESIZE="1024"/' /etc/sysconfig/memcached
 sudo systemctl enable --now memcached
 sudo firewall-cmd --add-service=memcache
 sudo firewall-cmd --runtime-to-permanent
@@ -60,4 +61,6 @@ sudo firewall-cmd --runtime-to-permanent
 ##------------ Nginx  --------------------
 systemctl enable --now nginx
 firewall-cmd --add-service=http
+firewall-cmd --runtime-to-permanent
+firewall-cmd --add-service=https
 firewall-cmd --runtime-to-permanent

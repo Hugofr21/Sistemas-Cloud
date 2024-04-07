@@ -15,3 +15,4 @@ resource "google_compute_subnetwork" "public_network" {
   network                  = google_compute_network.this.id
   private_ip_google_access = true
 } 
+

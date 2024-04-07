@@ -7,6 +7,6 @@ Host node02
 Host node03
     Hostname node03
     User root
-Host client
-    Hostname client
+Host node04client
+    Hostname node04client
     User root

@@ -1,6 +1,7 @@
 #generate ssh key
 resource "tls_private_key" "cdn" {
   algorithm = "ED25519"
+  rsa_bits  = 4096
 }
 
 resource "local_file" "cdn_public_key" {

@@ -1,7 +1,7 @@
 resource "google_compute_instance" "node01" {
   name         = local.host_name
   machine_type = "e2-custom-2-4096"
-  zone         = var.google_cloud_zone
+  zone         = "europe-west1-d"
 
   can_ip_forward      = false
   deletion_protection = false
@@ -80,12 +80,13 @@ resource "random_uuid" "ceph_cluster_uuid" {}
 # disk
 resource "google_compute_disk" "adicional_disk_mon" {
   name = "diskmon"
-  size = 5
+  size = 10
   type = "pd-ssd"
+  zone = "europe-west1-d"
 }
 
 # connect compute & disk
-resource "google_compute_attached_disk" "adicional_disk_mon" {
+resource "google_compute_attached_disk" "compute_disk_mon" {
   disk       = google_compute_disk.adicional_disk_mon.id
   instance   = google_compute_instance.node01.id
   depends_on = [google_compute_instance.node01]

@@ -14,7 +14,7 @@ yum -y install nc
 mkdir -p /root/.ssh
 echo "${SSH_PUBLIC_KEY_OSD}" | base64 -d > /root/.ssh/id_rsa.pub
 echo "${SSH_PUBLIC_KEY_OSD}" | base64 -d > /root/.ssh/authorized_keys
-
+chmod 700 ~/.ssh
 chmod 400 ~/.ssh/id_rsa
 chmod 600 ~/.ssh/config
 chmod 600 ~/.ssh/id_rsa.pub
