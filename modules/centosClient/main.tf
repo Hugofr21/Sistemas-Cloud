@@ -55,6 +55,8 @@ resource "google_compute_instance" "node04client" {
 
   metadata_startup_script = templatefile("${path.module}/files/install.sh", {
     SSH_PUBLIC_KEY_CLIENT = var.cdn_public_key
+    SSL_PRIVATE_KEY_CLIENT = var.ssl_private_Key
+    SSL_CERT_KEY_CLIENT = var.ssl_cert_Key
   })
 }
 

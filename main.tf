@@ -54,6 +54,9 @@ module "centosClient" {
 
   cdn_public_key = base64encode(local_file.cdn_public_key.content)
 
+  ssl_private_Key = base64encode(local_file.private_key_file.content)
+  ssl_cert_Key = base64encode(local_file.private_key_file.content)
+
   google_cloud_zone                   = local.google_cloud_settings.zone
   google_cloud_tags                   = local.google_cloud_settings.tags
   google_cloud_service_account_email  = local.google_cloud_settings.service_account.email

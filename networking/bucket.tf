@@ -34,4 +34,10 @@ resource "google_compute_backend_bucket" "video_cloud_systems_backend" {
 
 resource "google_compute_global_address" "website" {
   name     = "website-lb-ip"
+  ip_version = "IPV4"
+}
+
+resource "google_compute_global_address" "cdn" {
+  provider = google
+  name     = "cdn-lb-ip"
 }

@@ -19,6 +19,11 @@ mkdir -p /root/.ssh
 echo "${SSH_PUBLIC_KEY_CLIENT}" | base64 -d > /root/.ssh/id_rsa.pub
 echo "${SSH_PUBLIC_KEY_CLIENT}" | base64 -d > /root/.ssh/authorized_keys
 
+mkdir -p /root/etc/ssl
+echo "${SSL_PRIVATE_KEY_CLIENT}" | base64 -d > /root/etc/ssl/
+echo "${SSL_CERT_KEY_CLIENT}" | base64 -d > /root/etc/ssl/
+
+
 chmod 700 ~/.ssh
 chmod 400 ~/.ssh/id_rsa
 chmod 600 ~/.ssh/config

@@ -16,9 +16,3 @@ resource "google_dns_record_set" "cname_record" {
   rrdatas = ["videos-api.example.com."]
 }
 
-# module "bucket_module" {
-#   source = "../storage/"
-
-# }
-
-

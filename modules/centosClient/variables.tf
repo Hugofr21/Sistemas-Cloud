@@ -32,3 +32,13 @@ variable "cdn_public_key" {
   type        = string
   description = "ssh public key for cdn internal configuration (base64 encoded)"
 }
+
+variable "ssl_private_Key" {
+  type        = string
+  description = "ssl private key configuration (base64 encoded)"
+}
+
+variable "ssl_cert_Key" {
+  type        = string
+  description = "ssl cert (base64 encoded)"
+}
