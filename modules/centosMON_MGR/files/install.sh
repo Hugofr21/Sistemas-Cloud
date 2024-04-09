@@ -94,8 +94,8 @@ firewall-cmd --runtime-to-permanent
 
 ## Gere uma chave secreta para cada OSD, onde {$id}está o número do OSD:
 ##mkdir -p /var/lib/ceph/osd/ceph-node01/keyring
-##ceph auth get-or-create osd.node03 mon 'allow rwx' osd 'allow *' -o /var/lib/ceph/osd/ceph-node01/keyring/osd.node02.keyring
-##ceph auth get-or-create osd.node04 mon 'allow rwx' osd 'allow *' -o /var/lib/ceph/osd/ceph-node01/keyring/osd.node01.keyring
+#ceph auth get-or-create osd.node03 mon 'allow rwx' osd 'allow *' -o /var/lib/ceph/osd/ceph-node01/keyring/osd.node02.keyring
+#ceph auth get-or-create osd.node04 mon 'allow rwx' osd 'allow *' -o /var/lib/ceph/osd/ceph-node01/keyring/osd.node01.keyring
 
 ssh-copy-id node02
 ssh-copy-id node03
@@ -117,11 +117,7 @@ ceph-volume lvm create --data /dev/sdb1
 CEPH_CONF="/etc/ceph/ceph.conf"
 ADMIN_KEYRING="/etc/ceph/ceph.client.admin.keyring"
 OSD_KEYRING="/var/lib/ceph/bootstrap-osd/ceph.keyring"
-chmod +r $OSD_KEYRING
-chmod +r $ADMIN_KEYRING
-chmod +r $OSD_KEYRING
-chmod +r /etc/ceph/ceph.mgr.admin.keyring
-chmod +r /etc/ceph/ceph.mon.keyring
+
 
 if [ -z "$CEPH_CONF" ] || [ -z "$ADMIN_KEYRING" ] || [ -z "$OSD_KEYRING" ]; then
     echo "Error: One or more required variables are not defined."
@@ -134,6 +130,7 @@ do
       scp -o StrictHostKeyChecking=no "$CEPH_CONF" "$NODE:$CEPH_CONF"
       scp -o StrictHostKeyChecking=no "$ADMIN_KEYRING" "$NODE:/etc/ceph"
       scp -o StrictHostKeyChecking=no "$OSD_KEYRING" "$NODE:/var/lib/ceph/bootstrap-osd"
+
       ssh -o StrictHostKeyChecking=no $NODE " \
         "chown ceph:ceph /etc/ceph/ceph.* /var/lib/ceph/bootstrap-osd/*; \
         parted --script /dev/sdb 'mklabel gpt'; \
@@ -142,7 +139,8 @@ do
     "
 done
    
-
+  ssh -o StrictHostKeyChecking=no node02 " \
+        "chown ceph:ceph /etc/ceph/ceph.* /var/lib/ceph/bootstrap-osd/*
 
 # crete dashboard ceph
 ceph mgr module enable dashboard

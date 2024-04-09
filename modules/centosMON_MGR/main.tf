@@ -1,7 +1,7 @@
 resource "google_compute_instance" "node01" {
   name         = local.host_name
   machine_type = "e2-custom-2-4096"
-  zone         = "europe-west1-d"
+  zone         = var.google_cloud_zone
 
   can_ip_forward      = false
   deletion_protection = false
@@ -82,7 +82,7 @@ resource "google_compute_disk" "adicional_disk_mon" {
   name = "diskmon"
   size = 10
   type = "pd-ssd"
-  zone = "europe-west1-d"
+  zone = var.google_cloud_zone
 }
 
 # connect compute & disk

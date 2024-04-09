@@ -1,7 +1,7 @@
 resource "google_compute_instance" "node04client" {
   name         = local.host_name
   machine_type = "e2-medium"
-  zone         = "europe-west1-d"
+  zone         = var.google_cloud_zone
 
   can_ip_forward      = true
   deletion_protection = false
@@ -63,7 +63,7 @@ resource "google_compute_disk" "adicional_disk_client" {
   name = "diskclient"
   size = 10
   type = "pd-ssd"
-  zone = "europe-west1-d"
+  zone = var.google_cloud_zone
 }
 
 # connect compute & disk
