@@ -1,6 +1,6 @@
 locals {
   google_cloud_settings = {
-    zone = "europe-west1-b"
+    zone = "europe-west1-c"
     tags = ["http-server","tcp"]
     service_account = {
       email  = "694272304681-compute@developer.gserviceaccount.com"

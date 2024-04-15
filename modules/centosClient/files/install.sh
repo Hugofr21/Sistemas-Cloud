@@ -20,9 +20,17 @@ echo "${SSH_PUBLIC_KEY_CLIENT}" | base64 -d > /root/.ssh/id_rsa.pub
 echo "${SSH_PUBLIC_KEY_CLIENT}" | base64 -d > /root/.ssh/authorized_keys
 
 mkdir -p /root/etc/ssl
-echo "${SSL_PRIVATE_KEY_CLIENT}" | base64 -d > /root/etc/ssl/
-echo "${SSL_CERT_KEY_CLIENT}" | base64 -d > /root/etc/ssl/
+if echo "${SSL_PRIVATE_KEY_CLIENT}" | base64 -d > /root/etc/ssl/ssl_private_key.pem; then
+    echo "SSL private key saved successfully."
+else
+    echo "Error: Failed to save SSL private key."
+fi
 
+if echo "${SSL_CERT_KEY_CLIENT}" | base64 -d > /root/etc/ssl/ssl_certificate.pem; then
+    echo "SSL certificate saved successfully."
+else
+    echo "Error: Failed to save SSL certificate."
+fi
 
 chmod 700 ~/.ssh
 chmod 400 ~/.ssh/id_rsa
@@ -69,3 +77,8 @@ firewall-cmd --add-service=http
 firewall-cmd --runtime-to-permanent
 firewall-cmd --add-service=https
 firewall-cmd --runtime-to-permanent
+
+base64 -d <<< "${server_config_nginx}" > /etc/nginx/conf.d/video-server.conf
+mkdir -p /usr/share/nginx/video-cloud
+systemctl reload nginx
+setsebool -P httpd_can_network_connect on

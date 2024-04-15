@@ -67,6 +67,7 @@ resource "google_compute_disk" "adicional_disk_osd" {
   name = "diskosd"
   size = 10
   type = "pd-ssd"
+  zone = var.gce_zone
 }
 
 # connect compute & disk

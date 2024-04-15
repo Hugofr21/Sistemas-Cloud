@@ -94,8 +94,8 @@ firewall-cmd --runtime-to-permanent
 
 ## Gere uma chave secreta para cada OSD, onde {$id}está o número do OSD:
 ##mkdir -p /var/lib/ceph/osd/ceph-node01/keyring
-#ceph auth get-or-create osd.node03 mon 'allow rwx' osd 'allow *' -o /var/lib/ceph/osd/ceph-node01/keyring/osd.node02.keyring
-#ceph auth get-or-create osd.node04 mon 'allow rwx' osd 'allow *' -o /var/lib/ceph/osd/ceph-node01/keyring/osd.node01.keyring
+#ceph auth get-or-create osd.node02 mon 'allow rwx' osd 'allow *' -o /var/lib/ceph/osd/ceph-node01/keyring/osd.node02.keyring
+#ceph auth get-or-create osd.node03 mon 'allow rwx' osd 'allow *' -o /var/lib/ceph/osd/ceph-node01/keyring/osd.node01.keyring
 
 ssh-copy-id node02
 ssh-copy-id node03
@@ -107,11 +107,6 @@ do
     ssh $NODE "firewall-cmd --add-service=ceph; firewall-cmd --runtime-to-permanent" -q
 done
 
-##created OSD node01 
-chown ceph:ceph /etc/ceph/ceph.* /var/lib/ceph/bootstrap-osd/*
-parted --script /dev/sdb 'mklabel gpt'
-parted --script /dev/sdb 'mkpart primary 0% 100%'
-ceph-volume lvm create --data /dev/sdb1
 
 # VMs node02 node03 OSD configuration
 CEPH_CONF="/etc/ceph/ceph.conf"
@@ -133,15 +128,18 @@ do
 
       ssh -o StrictHostKeyChecking=no $NODE " \
         "chown ceph:ceph /etc/ceph/ceph.* /var/lib/ceph/bootstrap-osd/*; \
-        parted --script /dev/sdb 'mklabel gpt'; \
-        parted --script /dev/sdb 'mkpart primary 0% 100%'; \
-        ceph-volume lvm create --data /dev/sdb1"
+        sudo parted --script /dev/sdb 'mklabel gpt'; \
+        sudo parted --script /dev/sdb 'mkpart primary 0% 100%'; \
+        sudo ceph-volume lvm create --data /dev/sdb1"
     "
 done
-   
-  ssh -o StrictHostKeyChecking=no node02 " \
-        "chown ceph:ceph /etc/ceph/ceph.* /var/lib/ceph/bootstrap-osd/*
 
+##created OSD node01 
+chown ceph:ceph /etc/ceph/ceph.* /var/lib/ceph/bootstrap-osd/*
+parted --script /dev/sdb 'mklabel gpt'
+parted --script /dev/sdb 'mkpart primary 0% 100%'
+ceph-volume lvm create --data /dev/sdb1
+   
 # crete dashboard ceph
 ceph mgr module enable dashboard
 ceph mgr module ls | grep dashboard

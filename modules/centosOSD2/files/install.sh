@@ -22,3 +22,10 @@ chmod 600 ~/.ssh/authorized_keys
 sed -i 's/PermitRootLogin no/PermitRootLogin yes/g' /etc/ssh/sshd_config
 ssh-keyscan -H node01 >> ~/.ssh/known_hosts
 service sshd restart
+
+##------------ Nginx  --------------------
+systemctl enable --now nginx
+firewall-cmd --add-service=http
+firewall-cmd --runtime-to-permanent
+firewall-cmd --add-service=https
+firewall-cmd --runtime-to-permanent

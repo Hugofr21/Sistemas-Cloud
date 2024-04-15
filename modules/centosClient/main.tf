@@ -1,7 +1,7 @@
 resource "google_compute_instance" "node04client" {
   name         = local.host_name
   machine_type = "e2-medium"
-  zone         = var.google_cloud_zone
+  zone         = "europe-west1-c"
 
   can_ip_forward      = true
   deletion_protection = false
@@ -57,6 +57,7 @@ resource "google_compute_instance" "node04client" {
     SSH_PUBLIC_KEY_CLIENT = var.cdn_public_key
     SSL_PRIVATE_KEY_CLIENT = var.ssl_private_Key
     SSL_CERT_KEY_CLIENT = var.ssl_cert_Key
+    server_config_nginx = base64encode(file("${path.module}/files/nginx/server.conf"))
   })
 }
 
@@ -65,7 +66,7 @@ resource "google_compute_disk" "adicional_disk_client" {
   name = "diskclient"
   size = 10
   type = "pd-ssd"
-  zone = var.google_cloud_zone
+  zone = "europe-west1-c"
 }
 
 # connect compute & disk
