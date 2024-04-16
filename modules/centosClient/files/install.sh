@@ -41,6 +41,9 @@ sed -i 's/PermitRootLogin no/PermitRootLogin yes/g' /etc/ssh/sshd_config
 ssh-keyscan -H node01 >> ~/.ssh/known_hosts
 service sshd restart
 
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+
 
 postgresql-setup --initdb
 systemctl enable --now postgresql

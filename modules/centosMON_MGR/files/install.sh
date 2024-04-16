@@ -32,6 +32,9 @@ firewall-cmd --add-service=ssh
 firewall-cmd --runtime-to-permanent
 base64 -d <<< "${ceph_conf}" > /etc/ceph/ceph.conf
 
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+
 # generate secret key for Cluster monitoring
 ceph-authtool --create-keyring /etc/ceph/ceph.mon.keyring --gen-key -n mon. --cap mon 'allow *'
 
@@ -92,11 +95,6 @@ firewall-cmd --runtime-to-permanent
 firewall-cmd --add-service=nfs
 firewall-cmd --runtime-to-permanent
 
-## Gere uma chave secreta para cada OSD, onde {$id}está o número do OSD:
-##mkdir -p /var/lib/ceph/osd/ceph-node01/keyring
-#ceph auth get-or-create osd.node02 mon 'allow rwx' osd 'allow *' -o /var/lib/ceph/osd/ceph-node01/keyring/osd.node02.keyring
-#ceph auth get-or-create osd.node03 mon 'allow rwx' osd 'allow *' -o /var/lib/ceph/osd/ceph-node01/keyring/osd.node01.keyring
-
 ssh-copy-id node02
 ssh-copy-id node03
 ssh-copy-id node04client
@@ -109,37 +107,28 @@ done
 
 
 # VMs node02 node03 OSD configuration
-CEPH_CONF="/etc/ceph/ceph.conf"
-ADMIN_KEYRING="/etc/ceph/ceph.client.admin.keyring"
-OSD_KEYRING="/var/lib/ceph/bootstrap-osd/ceph.keyring"
-
-
-if [ -z "$CEPH_CONF" ] || [ -z "$ADMIN_KEYRING" ] || [ -z "$OSD_KEYRING" ]; then
-    echo "Error: One or more required variables are not defined."
-    exit 1
-fi
-
-for NODE in node02 node03
+for NODE in node01 node02 node03
 do
-
-      scp -o StrictHostKeyChecking=no "$CEPH_CONF" "$NODE:$CEPH_CONF"
-      scp -o StrictHostKeyChecking=no "$ADMIN_KEYRING" "$NODE:/etc/ceph"
-      scp -o StrictHostKeyChecking=no "$OSD_KEYRING" "$NODE:/var/lib/ceph/bootstrap-osd"
-
-      ssh -o StrictHostKeyChecking=no $NODE " \
-        "chown ceph:ceph /etc/ceph/ceph.* /var/lib/ceph/bootstrap-osd/*; \
-        sudo parted --script /dev/sdb 'mklabel gpt'; \
-        sudo parted --script /dev/sdb 'mkpart primary 0% 100%'; \
-        sudo ceph-volume lvm create --data /dev/sdb1"
-    "
-done
+    if [ ! ${NODE} = "node01" ]
+    then
+        scp /etc/ceph/ceph.conf ${NODE}:/etc/ceph/ceph.conf
+        scp /etc/ceph/ceph.client.admin.keyring ${NODE}:/etc/ceph
+        scp /var/lib/ceph/bootstrap-osd/ceph.keyring ${NODE}:/var/lib/ceph/bootstrap-osd
+    fi
+    ssh $NODE \
+    "chown ceph:ceph /etc/ceph/ceph.* /var/lib/ceph/bootstrap-osd/*; \
+    parted --script /dev/sdb 'mklabel gpt'; \
+    parted --script /dev/sdb "mkpart primary 0% 100%"; \
+    ceph-volume lvm create --data /dev/sdb1"
+done 
 
 ##created OSD node01 
-chown ceph:ceph /etc/ceph/ceph.* /var/lib/ceph/bootstrap-osd/*
-parted --script /dev/sdb 'mklabel gpt'
-parted --script /dev/sdb 'mkpart primary 0% 100%'
-ceph-volume lvm create --data /dev/sdb1
+# chown ceph:ceph /etc/ceph/ceph.* /var/lib/ceph/bootstrap-osd/*
+# parted --script /dev/sdb 'mklabel gpt'
+# parted --script /dev/sdb 'mkpart primary 0% 100%'
+# ceph-volume lvm create --data /dev/sdb1
    
+
 # crete dashboard ceph
 ceph mgr module enable dashboard
 ceph mgr module ls | grep dashboard
@@ -162,23 +151,6 @@ for NODE in node01
 systemctl daemon-reload
 systemctl restart ceph-mgr@node01.service
 
-# # Allow the MDS to go down and mark the filesystem offline
- ceph mds set allow_down true
- ceph mds set allow_new_snaps true
- ceph mds set allow_multimds true
-
-# # send to client host executed keuring permmisions rwx-------
-
-ssh $NODE_CLIENT "
-    ceph-authtool -p /etc/ceph/ceph.client.admin.keyring > admin.key; \
-    chmod 600 admin.key;
-"
-if [ $? -eq 0 ]; then
-    echo "Remote command executed with success."
-else
-    echo "Err to remote command executed  Código de saída: $?"
-fi
-
 
 # file rync backup postgresql
 # Copy files or directories from one location to an another localtion by [rsync].
@@ -191,3 +163,35 @@ setsebool -P rsync_full_access on
 firewall-cmd --add-service=rsyncd --permanent
 firewall-cmd --reload
 
+#FileSystem
+ssh-copy-id node04Client
+scp /etc/ceph/ceph.conf node04Client:/etc/ceph/
+scp /etc/ceph/ceph.client.admin.keyring node04Client:/etc/ceph/
+ssh node04Client "chown ceph:ceph /etc/ceph/ceph.*"
+mkdir -p /var/lib/ceph/mds/ceph-node01
+ceph-authtool --create-keyring /var/lib/ceph/mds/ceph-node01/keyring --gen-key -n mds.node01
+chown -R ceph:ceph /var/lib/ceph/mds/ceph-node01
+ceph auth add mds.node01 osd "allow rwx" mds "allow" mon "allow profile mds" -i /var/lib/ceph/mds/ceph-node01/keyring
+systemctl enable --now ceph-mds@node01
+
+ceph osd pool create cephfs_data 32
+ceph osd pool create cephfs_metadata 32
+ceph osd pool set cephfs_data bulk true
+ceph fs new cephfs cephfs_metadata cephfs_data
+ceph fs ls
+ceph fs new cephfs cephfs_metadata cephfs_data
+ceph mds stat
+ceph fs status cephfs
+
+# # Allow the MDS to go down and mark the filesystem offline
+ ceph mds set allow_down true
+ ceph mds set allow_new_snaps true
+ ceph mds set allow_multimds true
+
+# # send to client host executed keuring permmisions rwx-------
+scp /etc/ceph/ceph.client.admin.keyring root@node04client:/etc/ceph
+scp /etc/ceph/ceph.conf root@node04client:/etc/ceph
+ssh -o StrictHostKeyChecking=no root@node04client "
+    ceph-authtool -p /etc/ceph/ceph.client.admin.keyring > admin.key; \
+    chmod 600 admin.key;
+"

@@ -17,6 +17,13 @@ resource "google_compute_url_map" "website" {
   provider        = google
   name            = "website-url-map"
   default_service = google_compute_backend_bucket.website.self_link
+
+}
+
+resource "google_compute_ssl_policy" "cdn_ssl_policy" {
+  provider = google
+  name     = "website-ssl-policy"
+  
 }
 
 resource "google_compute_target_https_proxy" "website" {
@@ -36,10 +43,6 @@ resource "google_compute_global_forwarding_rule" "website" {
   target                = google_compute_target_https_proxy.website.self_link
 }
 
-resource "google_compute_ssl_policy" "cdn_ssl_policy" {
-  provider = google
-  name     = "website-ssl-policy"
-}
 
 resource "google_compute_backend_bucket" "cdn_backend_bucket" {
   provider    = google
@@ -69,4 +72,10 @@ resource "google_compute_global_forwarding_rule" "cdn" {
   ip_protocol           = "TCP"
   port_range            = "443"
   target                = google_compute_target_http_proxy.cdn_proxy.self_link
+}
+
+resource "google_storage_bucket_iam_member" "all_users_viewers" {
+  bucket = google_storage_bucket.video_cloud_systems.name
+  role   = "roles/storage.legacyObjectReader"
+  member = "allUsers"
 }

@@ -8,6 +8,9 @@ dnf -y install ceph
 mkdir -p /etc/ceph
 yum -y install nc
 
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+
 # systemctl stop firewalld
 # systemctl disable firewalld
 
