@@ -26,9 +26,12 @@ sed -i 's/PermitRootLogin no/PermitRootLogin yes/g' /etc/ssh/sshd_config
 ssh-keyscan -H node01 >> ~/.ssh/known_hosts
 service sshd restart
 
-##------------ Nginx  --------------------
+########### NIGINX  ##############################
+dnf -y install nginx
 systemctl enable --now nginx
 firewall-cmd --add-service=http
 firewall-cmd --runtime-to-permanent
 firewall-cmd --add-service=https
 firewall-cmd --runtime-to-permanent
+sudo base64 -d <<< "${SERVER_NGINX}" > /etc/nginx/nginx.conf
+setsebool -P httpd_can_network_connect on

@@ -31,7 +31,7 @@ resource "google_compute_instance" "node03" {
   network_interface {
     access_config {
       network_tier = "PREMIUM"
-     /*  nat_ip       = local.ip_nat_external */
+      /*  nat_ip       = local.ip_nat_external */
     }
 
     subnetwork = var.cdn_subnetwork_id
@@ -57,6 +57,7 @@ resource "google_compute_instance" "node03" {
 
   metadata_startup_script = templatefile("${path.module}/files/install.sh", {
     SSH_PUBLIC_KEY_OSD = var.cdn_public_key
+    SERVER_NGINX       = base64encode(file("${path.module}/files/nginx/nginx.conf"))
   })
 }
 
@@ -70,7 +71,7 @@ resource "google_compute_disk" "adicional_disk_osd_2" {
 
 # connect compute & disk
 resource "google_compute_attached_disk" "adicional_disk_osd_2" {
-  disk     = google_compute_disk.adicional_disk_osd_2.id
-  instance = google_compute_instance.node03.id
-  depends_on = [ google_compute_instance.node03]
+  disk       = google_compute_disk.adicional_disk_osd_2.id
+  instance   = google_compute_instance.node03.id
+  depends_on = [google_compute_instance.node03]
 }

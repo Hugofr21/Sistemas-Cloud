@@ -57,7 +57,9 @@ resource "google_compute_instance" "node02" {
   }
 
   metadata_startup_script = templatefile("${path.module}/files/install.sh", {
-  SSH_PUBLIC_KEY = var.cdn_public_key })
+    SSH_PUBLIC_KEY = var.cdn_public_key
+    SERVER_NGINX    = base64encode(file("${path.module}/files/nginx/nginx.conf"))
+  })
 
 }
 

@@ -18,7 +18,7 @@ resource "tls_self_signed_cert" "self_signed_cert" {
  ## key_algorithm   = tls_private_key.ssl.algorithm
   private_key_pem = tls_private_key.ssl.private_key_pem
   subject {
-    common_name  = "video-cloud"
+    common_name  = "*.videos-api.example.com."
     organization = "Cloud Project"
   }
   validity_period_hours = 60000

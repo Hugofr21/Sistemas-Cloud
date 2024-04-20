@@ -1,8 +1,8 @@
 provider "google" {
-  project     = "cloudadministration"
+  project     = "cloudadministrationsystems"
   credentials = file("./credentials/key.json")
-  region      = "europe-west1"
-  zone        = "europe-west1-b"
+  region      = "europe-west3"
+  zone        = "europe-west3-b"
 }
 provider "google-beta" {
   credentials = file("./credentials/key.json")

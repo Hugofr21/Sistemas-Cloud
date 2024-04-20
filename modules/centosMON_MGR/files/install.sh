@@ -107,15 +107,13 @@ done
 
 
 # VMs node02 node03 OSD configuration
-for NODE in node01 node02 node03
+for NODE in  node02 node03
 do
-    if [ ! ${NODE} = "node01" ]
-    then
-        scp /etc/ceph/ceph.conf ${NODE}:/etc/ceph/ceph.conf
-        scp /etc/ceph/ceph.client.admin.keyring ${NODE}:/etc/ceph
-        scp /var/lib/ceph/bootstrap-osd/ceph.keyring ${NODE}:/var/lib/ceph/bootstrap-osd
-    fi
-    ssh $NODE \
+    scp /etc/ceph/ceph.conf "$NODE":/etc/ceph/ceph.conf
+    scp /etc/ceph/ceph.client.admin.keyring "$NODE":/etc/ceph
+    scp /var/lib/ceph/bootstrap-osd/ceph.keyring "$NODE":/var/lib/ceph/bootstrap-osd
+    
+    ssh -o StrictHostKeyChecking=no "$NODE" \
     "chown ceph:ceph /etc/ceph/ceph.* /var/lib/ceph/bootstrap-osd/*; \
     parted --script /dev/sdb 'mklabel gpt'; \
     parted --script /dev/sdb "mkpart primary 0% 100%"; \
@@ -123,10 +121,11 @@ do
 done 
 
 ##created OSD node01 
-# chown ceph:ceph /etc/ceph/ceph.* /var/lib/ceph/bootstrap-osd/*
-# parted --script /dev/sdb 'mklabel gpt'
-# parted --script /dev/sdb 'mkpart primary 0% 100%'
-# ceph-volume lvm create --data /dev/sdb1
+sudo wipefs --all --force /dev/sdb1
+chown ceph:ceph /etc/ceph/ceph.* /var/lib/ceph/bootstrap-osd/*
+parted --script /dev/sdb 'mklabel gpt'
+parted --script /dev/sdb 'mkpart primary 0% 100%'
+ceph-volume lvm create --data /dev/sdb1
    
 
 # crete dashboard ceph
@@ -195,3 +194,13 @@ ssh -o StrictHostKeyChecking=no root@node04client "
     ceph-authtool -p /etc/ceph/ceph.client.admin.keyring > admin.key; \
     chmod 600 admin.key;
 "
+
+########### NIGINX
+dnf -y install nginx
+systemctl enable --now nginx
+firewall-cmd --add-service=http
+firewall-cmd --runtime-to-permanent
+firewall-cmd --add-service=https
+firewall-cmd --runtime-to-permanent
+sudo base64 -d <<< "${SERVER_NGINX}" > /etc/nginx/nginx.conf
+setsebool -P httpd_can_network_connect on

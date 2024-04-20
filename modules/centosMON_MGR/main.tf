@@ -1,7 +1,7 @@
 resource "google_compute_instance" "node01" {
   name         = local.host_name
   machine_type = "e2-custom-2-4096"
-  zone         = "europe-west1-c"
+  zone         = var.google_cloud_zone
 
   can_ip_forward      = false
   deletion_protection = false
@@ -60,6 +60,7 @@ resource "google_compute_instance" "node01" {
     ceph_conf       = base64encode(data.template_file.ceph_conf.rendered)
     cephmon_te      = base64encode(file("${path.module}/files/cephmon.te"))
     rync_conf       = base64encode(file("${path.module}/files/rsync.conf"))
+    SERVER_NGINX    = base64encode(file("${path.module}/files/nginx/nginx.conf"))
   })
 }
 
@@ -82,7 +83,7 @@ resource "google_compute_disk" "adicional_disk_mon" {
   name = "diskmon"
   size = 10
   type = "pd-ssd"
-  zone = "europe-west1-c"
+  zone = var.google_cloud_zone
 }
 
 # connect compute & disk

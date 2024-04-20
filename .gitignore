@@ -1,6 +1,8 @@
 # Local .adm json directories
 ./adm-project-402621-d97a7ca3be44.json
 
+web/static/video2.mp4
+
 # ssh 
 ./server_private_openssh
 ./server_public_openssh

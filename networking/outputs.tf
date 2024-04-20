@@ -5,3 +5,4 @@ output "cdn_subnetwork_id" {
 output "cdn_subnetwork_cidr" {
   value = google_compute_subnetwork.private-subnet.ip_cidr_range
 }
+

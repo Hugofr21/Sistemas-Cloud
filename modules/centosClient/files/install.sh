@@ -20,13 +20,13 @@ echo "${SSH_PUBLIC_KEY_CLIENT}" | base64 -d > /root/.ssh/id_rsa.pub
 echo "${SSH_PUBLIC_KEY_CLIENT}" | base64 -d > /root/.ssh/authorized_keys
 
 mkdir -p /root/etc/ssl
-if echo "${SSL_PRIVATE_KEY_CLIENT}" | base64 -d > /root/etc/ssl/ssl_private_key.pem; then
+if echo "${SSL_PRIVATE_KEY_CLIENT}" | base64 -d > /etc/ssl/ssl_private_key.pem; then
     echo "SSL private key saved successfully."
 else
     echo "Error: Failed to save SSL private key."
 fi
 
-if echo "${SSL_CERT_KEY_CLIENT}" | base64 -d > /root/etc/ssl/ssl_certificate.pem; then
+if echo "${SSL_CERT_KEY_CLIENT}" | base64 -d > /etc/ssl/ssl_certificate.pem; then
     echo "SSL certificate saved successfully."
 else
     echo "Error: Failed to save SSL certificate."
@@ -58,17 +58,17 @@ systemctl enable --now postgresql
 mkdir -p /var/lib/ceph/mds/ceph-client/
 
 ##------------ ssl certicate --------------------
-# sudo dnf --enablerepo=epel -y install snapd
-# sudo ln -s /var/lib/snapd/snap /snap
-# snap list
-# snap find kubernetes
-# snap install certbot --classic
-# sudo certbot --nginx -d video-cloud
+sudo dnf --enablerepo=epel -y install snapd
+sudo ln -s /var/lib/snapd/snap /snap
+snap list
+snap find kubernetes
+snap install certbot --classic
+sudo certbot --nginx -d video-cloud
 
 
 ##------------ Memcached  --------------------
 #vi /etc/sysconfig/memcached
-sed -i -e 's/^PORT=.*/PORT="2000/"' /etc/sysconfig/memcached
+sed -i -e 's/^PORT=.*/PORT="433/"' /etc/sysconfig/memcached
 sed -i -e 's/^CACHESIZE=.*/CACHESIZE="1024"/' /etc/sysconfig/memcached
 sudo systemctl enable --now memcached
 sudo firewall-cmd --add-service=memcache
@@ -80,7 +80,7 @@ firewall-cmd --add-service=http
 firewall-cmd --runtime-to-permanent
 firewall-cmd --add-service=https
 firewall-cmd --runtime-to-permanent
-
+base64 -d <<< "${main_nginx}" > /etc/nginx/nginx.conf
 base64 -d <<< "${server_config_nginx}" > /etc/nginx/conf.d/video-server.conf
 mkdir -p /usr/share/nginx/video-cloud
 systemctl reload nginx

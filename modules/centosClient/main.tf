@@ -1,7 +1,7 @@
 resource "google_compute_instance" "node04client" {
   name         = local.host_name
   machine_type = "e2-medium"
-  zone         = "europe-west1-c"
+  zone         = var.google_cloud_zone
 
   can_ip_forward      = true
   deletion_protection = false
@@ -19,7 +19,7 @@ resource "google_compute_instance" "node04client" {
 
     initialize_params {
       image = "projects/centos-cloud/global/images/centos-stream-8-v20231115"
-      size  = 30
+      size  = 25
       type  = "pd-ssd"
     }
 
@@ -57,6 +57,7 @@ resource "google_compute_instance" "node04client" {
     SSH_PUBLIC_KEY_CLIENT = var.cdn_public_key
     SSL_PRIVATE_KEY_CLIENT = var.ssl_private_Key
     SSL_CERT_KEY_CLIENT = var.ssl_cert_Key
+    main_nginx = base64encode(file("${path.module}/files/nginx/nginx.conf"))
     server_config_nginx = base64encode(file("${path.module}/files/nginx/server.conf"))
   })
 }
@@ -64,9 +65,9 @@ resource "google_compute_instance" "node04client" {
 # disk
 resource "google_compute_disk" "adicional_disk_client" {
   name = "diskclient"
-  size = 10
+  size = 5
   type = "pd-ssd"
-  zone = "europe-west1-c"
+  zone = var.google_cloud_zone
 }
 
 # connect compute & disk
