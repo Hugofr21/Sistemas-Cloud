@@ -69,6 +69,22 @@ module "centosClient" {
 
 }
 
+
+module "cdn" {
+  source = "./modules/cdn"
+
+  google_cloud_zone                   = local.google_cloud_settings.zone
+  google_cloud_tags                   = local.google_cloud_settings.tags
+  google_cloud_service_account_email  = local.google_cloud_settings.service_account.email
+  google_cloud_service_account_scopes = local.google_cloud_settings.service_account.scopes
+
+  cdn_subnetwork_id   = module.networking.cdn_subnetwork_id
+  cdn_subnetwork_cidr = module.networking.cdn_subnetwork_cidr
+
+  depends_on = [module.networking]
+
+}
+
 module "networking" {
   source = "./networking"
 }

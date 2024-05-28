@@ -83,5 +83,8 @@ firewall-cmd --runtime-to-permanent
 base64 -d <<< "${main_nginx}" > /etc/nginx/nginx.conf
 base64 -d <<< "${server_config_nginx}" > /etc/nginx/conf.d/video-server.conf
 mkdir -p /usr/share/nginx/video-cloud
+
 systemctl reload nginx
+firewall-cmd --runtime-to-permanent
+
 setsebool -P httpd_can_network_connect on

@@ -1,0 +1,8 @@
+# add to the end
+OPTIONS="-4"
+
+# For how to write the section [*.*.*.*.in-addr.arpa], write your network address reversely like follows
+# case of 172.16.0.80/29
+# network address    ⇒ 172.16.0.10
+# network range      ⇒ 172.16.0.0/27
+# how to write       ⇒ 10.0.16.172.in-addr.arpa

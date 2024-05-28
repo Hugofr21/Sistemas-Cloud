@@ -11,7 +11,7 @@ resource "google_compute_managed_ssl_certificate" "website" {
   name     = "website-cert"
   description = "Contains files needed by the website"
   managed {
-    domains = [google_dns_record_set.website_record.name , "*.videos-api.example.com."]
+    domains = [google_dns_record_set.website_record.name]
   }
 }
 

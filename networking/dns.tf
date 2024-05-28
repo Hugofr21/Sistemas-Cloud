@@ -18,5 +18,3 @@ resource "google_dns_record_set" "website_record" {
   rrdatas = [google_compute_global_address.cdn.address]
 }
 
-
-

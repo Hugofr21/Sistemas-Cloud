@@ -15,12 +15,8 @@ resource "google_storage_bucket" "bucket_cloud_systems" {
     }
   }
 
-  # retention_policy {
-  #   retention_period = 604800
-  # }
-
   website {
-    main_page_suffix = "index.html"
+   main_page_suffix = "index.html"
     not_found_page   = "404.html"
   }
 }

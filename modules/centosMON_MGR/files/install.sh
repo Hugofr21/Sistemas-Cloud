@@ -107,7 +107,7 @@ done
 
 
 # VMs node02 node03 OSD configuration
-for NODE in  node02 node03
+for NODE in node02 node03
 do
     scp /etc/ceph/ceph.conf "$NODE":/etc/ceph/ceph.conf
     scp /etc/ceph/ceph.client.admin.keyring "$NODE":/etc/ceph

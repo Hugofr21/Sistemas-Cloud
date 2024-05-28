@@ -1,0 +1,15 @@
+$TTL 86400
+@   IN  SOA  ns1.video.world. root.video.world. (
+            2010080800 ; número de série
+            172800 ; refrescamento = 2d
+            900 ; nova tentativa = 15m
+            1209600 ; expiração = 2w
+            3600 ; nxdomain ttl = 1h
+            )
+
+@       IN NS   ns1.video.world.
+
+; host
+133     IN PTR blog.video.world.
+133     IN PTR www.video.world.
+133     IN PTR ns1.video.world.

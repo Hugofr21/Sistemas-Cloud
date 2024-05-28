@@ -8,3 +8,10 @@
 [Load Balancing]()
 
 [Ceph]()
+
+
+
+### Docker Configuration
+RUN chmod +x ./gradlew
+docker build -t cdn .
+docker run -p 8077:8077 cdn
