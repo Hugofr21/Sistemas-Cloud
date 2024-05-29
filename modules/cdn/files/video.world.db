@@ -1,5 +1,5 @@
 $TTL 86400
-@   IN  SOA  ns1.video.world. root.video.world. (
+@   IN  SOA  ns1.video22.world. root.video22.world. (
  2010080800 ; sn = número de série
  172800 ; ref = refrescamento = 2d
  900 ; ret = nova tentativa = 15m
@@ -7,10 +7,9 @@ $TTL 86400
  3600 ; nx = nxdomain ttl = 1h
  )
 
-@       IN NS   ns1.video.world.
+@       IN NS   ns1.video22.world.
 
 ; ### host    
-blog    IN  A       34.160.2.133
-www     IN  A       34.160.2.133
-
-ns1     IN  A       34.160.2.133
+blog    IN  A       34.120.60.202
+www     IN  A       34.120.60.202
+ns1     IN  A       34.120.60.202

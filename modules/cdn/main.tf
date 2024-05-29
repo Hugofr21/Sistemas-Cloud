@@ -29,7 +29,7 @@ resource "google_compute_instance" "cdn" {
   network_interface {
     access_config {
       network_tier = "PREMIUM"
-      # nat_ip       = local.ip_nat_external
+      nat_ip       = google_compute_address.static_vm_cdn.address
     }
 
     subnetwork = var.cdn_subnetwork_id
@@ -59,6 +59,12 @@ resource "google_compute_instance" "cdn" {
     NAMED_SYSCONFIG = base64encode(file("${path.module}/files/named"))
     INVERSA_DB = base64encode(file("${path.module}/files/10.0.16.172.db"))
   })
+}
+
+
+resource "google_compute_address" "static_vm_cdn" {
+  name   = "static-${local.host_name}"
+  region = "europe-west3"
 }
 
 

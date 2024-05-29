@@ -29,6 +29,9 @@ chmod 640 /var/named/video.world.db
 chmod 640 /var/named/10.0.16.172.db
 chmod 750 /etc/sysconfig/named
 
+sudo systemctl restart named
+sudo systemctl enable named
+
 sudo systemctl start docker
 
 sysctl -w net.ipv4.ip_forward=1
@@ -36,4 +39,16 @@ sysctl -w net.ipv4.ip_forward=1
 if ! grep -q "net.ipv4.ip_forward=1" /etc/sysctl.conf; then
     echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
 fi
+
+sudo iptables -A INPUT -p tcp --dport 53 -j ACCEPT
+sudo iptables -A INPUT -p udp --dport 53 -j ACCEPT
+sudo iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT
+sudo iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+sudo iptables-save > /etc/sysconfig/iptables
+
+curl -o api-spring.zip https://storage.googleapis.com/bucket-cloud-api/api-spring.zip
+unzip api-spring.zip
+docker build -t cdn .
+docker run -p 8077:8077 cdn
+
 

@@ -4,22 +4,107 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página de Vídeos</title>
+    <style>
+        body{
+            box-sizing: none;
+            background: #6c757d;
+            margin: 20px;
+            padding: 10px;
+        }
+        .video-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; 
+            gap: 10px; 
+        }
+        
+        .video-item {
+            flex: 0 0 calc(33.33% - 20px);
+            margin: 10px; 
+            box-sizing: border-box;
+        }
+        
+        @media screen and (max-width: 768px) {
+            .video-item {
+                flex: 0 0 calc(20% - 20px); 
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            .video-item {
+                flex: 0 0 50%; 
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Vídeos</h1>
-    <div>
-        <h2>Vídeo 1</h2>
-        <video width="320" height="240" controls>
-            <source src="video1.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-    </div>
-    <div>
-        <h2>Vídeo 2</h2>
-        <video width="320" height="240" controls>
-            <source src="video2.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-    </div>
+    <main>
+        <h1>Vídeos</h1>
+        <div class="video-container">
+            <div class="video-item">
+                <h2>Vídeo 1</h2>
+                <video width="320" height="240" controls>
+                    <source src="https://35.246.193.214:8077/video/view/Avance.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="video-item">
+                <h2>Vídeo 2</h2>
+                <video width="320" height="240" controls>
+                    <source src="https://35.246.193.214:8077/video/view/Destrave.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="video-item">
+                <h2>Vídeo 3</h2>
+                <video width="320" height="240" controls>
+                    <source src="https://35.246.193.214:8077/video/view/Eixo.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="video-item">
+                <h2>Vídeo 4</h2>
+                <video width="320" height="240" controls>
+                    <source src="https://35.246.193.214:8077/video/view/Estacione.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="video-item">
+                <h2>Vídeo 5</h2>
+                <video width="320" height="240" controls>
+                    <source src="https://35.246.193.214:8077/video/view/Fossa.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="video-item">
+                <h2>Vídeo 6</h2>
+                <video width="320" height="240" controls>
+                    <source src="https://35.246.193.214:8077/video/view/Recue.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="video-item">
+                <h2>Vídeo 7</h2>
+                <video width="320" height="240" controls>
+                    <source src="https://35.246.193.214:8077/video/view/Stop.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="video-item">
+                <h2>Vídeo 8</h2>
+                <video width="320" height="240" controls>
+                    <source src="https://35.246.193.214:8077/video/view/Trave.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="video-item">
+                <h2>Vídeo 9</h2>
+                <video width="320" height="240" controls>
+                    <source src="https://35.246.193.214:8077/video/view/Volante.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </main>
 </body>
 </html>

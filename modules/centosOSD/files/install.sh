@@ -7,6 +7,9 @@ dnf -y install ceph
 yum -y install nc
 mkdir -p /etc/ceph
 
+dnf config-manager --set-enabled powertools
+sudo yum install -y ceph-volume
+
 sudo systemctl stop firewalld
 sudo systemctl disable firewalld
 

@@ -105,6 +105,8 @@ do
     ssh $NODE "firewall-cmd --add-service=ceph; firewall-cmd --runtime-to-permanent" -q
 done
 
+dnf config-manager --set-enabled powertools
+sudo yum install -y ceph-volume
 
 # VMs node02 node03 OSD configuration
 for NODE in node02 node03

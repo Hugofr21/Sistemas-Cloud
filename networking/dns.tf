@@ -1,6 +1,6 @@
 resource "google_dns_managed_zone" "dns_zone" {
   name        = "videos-api-zone"
-  dns_name    = "videos-api.example.com."
+  dns_name    = "ns1video22world.com."
   description = "DNS zone for the videos API"
   dnssec_config {
     state = "off"
@@ -8,9 +8,8 @@ resource "google_dns_managed_zone" "dns_zone" {
   visibility = "public"
 }
 
-# Registo "A" se estiver apontando para um endereço IP, "CNAME" se estiver apontando para outro domínio
 resource "google_dns_record_set" "website_record" {
-  name    = "www.videos-api.example.com."
+  name    = "blog.ns1video22world.com"
   type    = "A" 
   ttl     = 300
   
