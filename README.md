@@ -12,6 +12,16 @@
 
 
 ### Docker Configuration
-RUN chmod +x ./gradlew
-docker build -t cdn .
-docker run -p 8077:8077 cdn
+```
+    RUN chmod +x ./gradlew
+    docker build -t cdn .
+    docker run -p 8077:8077 cdn
+```
+Node01
+246.205.246.35.bc.googleusercontent.com
+
+NODE02
+140.251.246.35.bc.googleusercontent.com
+
+NODE03
+172.127.234.35.bc.googleusercontent.com

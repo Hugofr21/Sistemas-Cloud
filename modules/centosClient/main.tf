@@ -59,6 +59,7 @@ resource "google_compute_instance" "node04client" {
     SSL_CERT_KEY_CLIENT = var.ssl_cert_Key
     main_nginx = base64encode(file("${path.module}/files/nginx/nginx.conf"))
     server_config_nginx = base64encode(file("${path.module}/files/nginx/server.conf"))
+    DOCKER_SYSTEMD = base64encode(file("${path.module}/files/cdn.service"))
   })
 }
 

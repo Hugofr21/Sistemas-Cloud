@@ -93,3 +93,12 @@ mkdir -p /var/cache/nginx
 openssl genpkey -algorithm RSA -out /etc/ssl/private/blog.ns1video22world.com.key -pkeyopt rsa_keygen_bits:2048
 openssl req -new -key /etc/ssl/private/blog.ns1video22world.com.key -out /etc/ssl/certs/blog.ns1video22world.com.csr -subj "/C=PT/ST=Lisboa/L=Lisboa/O=video22cloud/CN=blog.ns1video22world.com/emailAddress=root@video22cloud.com"
 openssl x509 -req -days 365 -in /etc/ssl/certs/blog.ns1video22world.com.csr -signkey /etc/ssl/private/blog.ns1video22world.com.key -out /etc/ssl/certs/blog.ns1video22world.com.crt
+
+base64 -d <<< "${DOCKER_SYSTEMD}" > /etc/systemd/system/cdn.service
+
+sudo systemctl daemon-reload
+sudo systemctl enable cdn.service
+sudo systemctl start cdn.service
+sudo systemctl status cdn.service
+
+sudo semanage port -a -t http_port_t -p tcp 444

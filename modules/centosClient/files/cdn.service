@@ -1,0 +1,13 @@
+[Unit]
+Description=Run CDN Docker container
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker run -p 8077:8077 --name cdn-container cdn
+ExecStop=/usr/bin/docker stop cdn-container
+ExecStopPost=/usr/bin/docker rm cdn-container
+
+[Install]
+WantedBy=multi-user.target
