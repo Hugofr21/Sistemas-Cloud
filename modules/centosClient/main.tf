@@ -77,3 +77,11 @@ resource "google_compute_attached_disk" "adicional_disk_rbd" {
   instance   = google_compute_instance.node04client.id
   depends_on = [google_compute_instance.node04client]
 }
+
+
+resource "google_compute_address" "static_vm_node04client" {
+  name   = "static-${local.host_name}"
+  region = "europe-west3"
+}
+
+

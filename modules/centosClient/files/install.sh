@@ -83,13 +83,15 @@ firewall-cmd --runtime-to-permanent
 base64 -d <<< "${main_nginx}" > /etc/nginx/nginx.conf
 base64 -d <<< "${server_config_nginx}" > /etc/nginx/conf.d/video-server.conf
 mkdir -p /usr/share/nginx/video-cloud
+mkdir -p /var/cache/nginx 
 
+sudo systemctl start nginx
+sudo systemctl enable nginx
 systemctl reload nginx
-firewall-cmd --runtime-to-permanent
 
+firewall-cmd --runtime-to-permanent
 setsebool -P httpd_can_network_connect on
 
-mkdir -p /var/cache/nginx 
 openssl genpkey -algorithm RSA -out /etc/ssl/private/blog.ns1video22world.com.key -pkeyopt rsa_keygen_bits:2048
 openssl req -new -key /etc/ssl/private/blog.ns1video22world.com.key -out /etc/ssl/certs/blog.ns1video22world.com.csr -subj "/C=PT/ST=Lisboa/L=Lisboa/O=video22cloud/CN=blog.ns1video22world.com/emailAddress=root@video22cloud.com"
 openssl x509 -req -days 365 -in /etc/ssl/certs/blog.ns1video22world.com.csr -signkey /etc/ssl/private/blog.ns1video22world.com.key -out /etc/ssl/certs/blog.ns1video22world.com.crt

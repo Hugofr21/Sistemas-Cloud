@@ -47,16 +47,16 @@ resource "google_storage_bucket_object" "static_web_src" {
 
   
 }
-resource "google_storage_bucket_object" "video1" {
-  name   = "video1.mp4"
-  source = "./web/static/video1.mp4"
-  bucket = google_storage_bucket.bucket_cloud_systems.name
-}
-resource "google_storage_bucket_object" "video2" {
-  name   = "video2.mp4"
-  source = "./web/static/video2.mp4"
-  bucket = google_storage_bucket.bucket_cloud_systems.name
-}
+# resource "google_storage_bucket_object" "video1" {
+#   name   = "video1.mp4"
+#   source = "./web/static/video1.mp4"
+#   bucket = google_storage_bucket.bucket_cloud_systems.name
+# }
+# resource "google_storage_bucket_object" "video2" {
+#   name   = "video2.mp4"
+#   source = "./web/static/video2.mp4"
+#   bucket = google_storage_bucket.bucket_cloud_systems.name
+# }
 
 resource "google_storage_bucket_iam_member" "all_users_viewers" {
   bucket = google_storage_bucket.bucket_cloud_systems.name
